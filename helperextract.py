@@ -17,25 +17,25 @@ def download_youtube_audios_and_transcripts(output_audio_dir, output_transcript_
     os.makedirs(output_transcript_dir, exist_ok=True)
     file_number = 1
 
-    ydl_opts_audio = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'wav',  
-            'preferredquality': '192', 
-        }],
-        'outtmpl': os.path.join(output_audio_dir, f'test{file_number}.%(ext)s'),
-    }
-
-    ydl_opts_transcript = {
-        'writesubtitles': True,
-        'subtitleslangs': ['en'],
-        'writeautomaticsub': True,
-        'skip_download': True,
-        'outtmpl': os.path.join(output_transcript_dir, f'test{file_number}.%(ext)s'),
-    }
-
     for link in youtube_links:
+        ydl_opts_audio = {
+            'format': 'bestaudio/best',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'wav',  
+                'preferredquality': '192', 
+            }],
+            'outtmpl': os.path.join(output_audio_dir, f'test{file_number}.%(ext)s'),
+        }
+
+        ydl_opts_transcript = {
+            'writesubtitles': True,
+            'subtitleslangs': ['en'],
+            'writeautomaticsub': True,
+            'skip_download': True,
+            'outtmpl': os.path.join(output_transcript_dir, f'test{file_number}.%(ext)s'),
+        }
+
         try:
             # Download audio
             with yt_dlp.YoutubeDL(ydl_opts_audio) as ydl:
