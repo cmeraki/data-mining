@@ -1,4 +1,6 @@
-# Let's dive into the data flow and code flow of this comprehensive Python script designed to download YouTube videos, extract audio, process subtitles, and manage audio splitting. Here's a step-by-step explanation of how the functions work together:
+# Youtube video scraping and data chunking
+
+Let's dive into the data flow and code flow of this comprehensive Python script designed to download YouTube videos, extract audio, process subtitles, and manage audio splitting. Here's a step-by-step explanation of how the functions work together:
 
 ## Step 1: Obtaining YouTube URLs
 The script begins by defining a function get_youtube_urls(channel_url) which takes the URL of a YouTube channel and retrieves all video URLs from that channel. It uses the yt-dlp command-line tool to fetch a playlist in JSON format and extracts video IDs to construct individual video URLs.
