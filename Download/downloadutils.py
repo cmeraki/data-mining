@@ -34,7 +34,7 @@ def download_youtube_audios_and_transcripts(output_audio_dir, output_transcript_
         # Define options for downloading subtitles
         ydl_opts_transcript = {
             'writesubtitles': True,
-            'subtitleslangs': ['en'],  # Change 'en' to your preferred language code
+            'subtitleslangs': ['hi'],  # Change 'en' to your preferred language code
             'writeautomaticsub': True,
             'skip_download': True,
             'outtmpl': os.path.join(output_transcript_dir, '%(id)s.%(ext)s'),  # Use video ID for filename
