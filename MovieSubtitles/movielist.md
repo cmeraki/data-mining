@@ -79,7 +79,7 @@ Barbara
 Barefoot in the park
 Basmati Blues
 Beanpole
-Beaupère
+BeaupÃ¨re
 Beautiful Stranger
 Becket
 Bedtime Story
@@ -392,7 +392,7 @@ Le Passe
 Le Retour De Martin Guerre
 Le Survenant
 Legal Eagles
-Les fantômes du chapelier
+Les fantÃ´mes du chapelier
 Les Tontons Flingueurs 1963 1080p
 Lethal Weapon 1
 Lethal Weapon 2
@@ -446,7 +446,7 @@ Mutiny on The.Bounty
 My Beautiful Laundrette
 My Breast
 My Cousin Vinny
-My Dinner With André
+My Dinner With AndrÃ©
 My Father My Lord
 My Favorite Brunette
 My Favorite Wife
