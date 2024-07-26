@@ -7,8 +7,8 @@ def process_vtt_files(dir, json_path):
         if filename.endswith(".vtt"):
             file_path = os.path.join(dir, filename)
             clean_text = clean_text_from_file(file_path)
-            cleaned_text_with_separators, _ = remove_timestamps_and_directives(clean_text, file_path)
-            json_creation(cleaned_text_with_separators, json_path)
+            cleaned_text_with_separators, file_name = remove_timestamps_and_directives(clean_text, file_path)
+            json_creation(cleaned_text_with_separators,file_name,json_path)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process VTT files and create JSON.")
