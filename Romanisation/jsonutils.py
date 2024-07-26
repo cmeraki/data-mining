@@ -58,10 +58,10 @@ def json_creation(input_text, file_name):
         }
     }
 
-    if not os.path.exists(file_path):
-        with open(file_path, 'w', encoding='utf-8') as file:
+    if not os.path.exists(file_name):
+        with open(file_name, 'w', encoding='utf-8') as file:
             pass 
 
     # Append the new request as a new line in the JSON file
-    with open(file_path, 'a', encoding='utf-8') as file:
+    with open(file_name, 'a', encoding='utf-8') as file:
         file.write(json.dumps(new_request, ensure_ascii=False) + '\n')
