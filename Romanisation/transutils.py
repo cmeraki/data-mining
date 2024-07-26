@@ -47,7 +47,7 @@ def transliterate_text(input_text, source_language, target_script):
               f"Transliteration:")
 
     response = openai.ChatCompletion.create(
-        model="gpt-4o",
+        model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": "You are a helpful assistant that performs transliteration.Just display the words and do not give any other message."},
             {"role": "user", "content": prompt}
