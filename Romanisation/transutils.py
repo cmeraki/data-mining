@@ -41,7 +41,7 @@ def transliterate_text(input_text, source_language, target_script):
     - source_language (str): The language of the input text.
     - target_script (str): The script to transliterate the text into.
     """
-    openai.api_key = "sk-proj-VOXGggALnfng2POFaOIMT3BlbkFJnUjLveXHsIl9RUFsz4xr"
+    openai.api_key = OPENAI_API_KEY
     prompt = (f"Transliterate the following {source_language} text into {target_script} script:\n\n"
               f"Text: {input_text}\n"
               f"Transliteration:")
