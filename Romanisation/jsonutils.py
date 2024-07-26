@@ -32,13 +32,14 @@ def remove_timestamps_and_directives(input_text,file_path):
     lines = text_only.splitlines()
     non_empty_lines = [line.strip() + ':' for line in lines if line.strip()]
     cleaned_text_with_separators = "\n".join(non_empty_lines)
-    
+
     return cleaned_text_with_separators,file_path.replace(".hi.vtt",'')
 
 import json
 import os
 
 def json_creation(input_text, file_name):
+    file_path = 'temp.json'
     new_request = {
         "custom_id": f"{file_name}",
         "method": "POST",
@@ -65,5 +66,3 @@ def json_creation(input_text, file_name):
     # Append the new request as a new line in the JSON file
     with open(file_path, 'a', encoding='utf-8') as file:
         file.write(json.dumps(new_request, ensure_ascii=False) + '\n')
-
-
