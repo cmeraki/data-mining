@@ -39,7 +39,6 @@ import json
 import os
 
 def json_creation(input_text, file_name):
-    file_path = 'temp.json'
     new_request = {
         "custom_id": f"{file_name}",
         "method": "POST",
