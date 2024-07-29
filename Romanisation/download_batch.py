@@ -2,7 +2,7 @@ import logging
 import time
 import json
 import os
-import requests  # Use requests to download file contents
+import requests
 
 # Set up logging configuration
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -22,33 +22,39 @@ class OpenAIBatchProcessor:
         # Retrieve the batch job
         batch_job = self._retrieve_batch_job(batch_job_id)
 
+        # Log the batch job details for debugging
+        logging.info(f"Batch job details: {batch_job}")
+
         # Monitor the batch job status
-        while batch_job['status'] not in ["completed", "failed", "cancelled"]:
+        while batch_job.get('status') not in ["completed", "failed", "cancelled"]:
             time.sleep(3)  # Wait for 3 seconds before checking the status again
-            logging.info(f"Batch job status: {batch_job['status']}")
+            logging.info(f"Batch job status: {batch_job.get('status')}")
             batch_job = self._retrieve_batch_job(batch_job_id)
 
         # Download and save the results
-        if batch_job['status'] == "completed":
-            result_file_url = batch_job['output_file_url']
-            result_file_name = "batch_job_results.jsonl"
-            self._download_file(result_file_url, result_file_name)
+        if batch_job.get('status') == "completed":
+            result_file_url = batch_job.get('output_file_url')  # Ensure this key exists in the response
+            if result_file_url:
+                result_file_name = "batch_job_results.jsonl"
+                self._download_file(result_file_url, result_file_name)
 
-            # Load data from the saved file
-            results = []
-            with open(result_file_name, "r") as file:
-                for line in file:
-                    json_object = json.loads(line.strip())
-                    results.append(json_object)
+                # Load data from the saved file
+                results = []
+                with open(result_file_name, "r") as file:
+                    for line in file:
+                        json_object = json.loads(line.strip())
+                        results.append(json_object)
 
-            logging.info("Batch job completed successfully.")
-            return results
+                logging.info("Batch job completed successfully.")
+                return results
+            else:
+                logging.error("Output file URL not found in the batch job details.")
+                return None
         else:
-            logging.error(f"Batch job failed with status: {batch_job['status']}")
+            logging.error(f"Batch job failed with status: {batch_job.get('status')}")
             return None
 
     def _retrieve_batch_job(self, batch_job_id):
-        # Replace with actual request to OpenAI's API to retrieve batch job
         response = requests.get(f"{self.base_url}/batches/{batch_job_id}",
                                 headers={"Authorization": f"Bearer {self.api_key}"})
         response.raise_for_status()
