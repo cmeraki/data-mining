@@ -33,10 +33,10 @@ class OpenAIBatchProcessor:
 
         # Download and save the results
         if batch_job.get('status') == "completed":
-            result_file_url = batch_job.get('output_file_url')  # Ensure this key exists in the response
-            if result_file_url:
+            result_file_id = batch_job.get('output_file_id')  # Use this key to get the file ID
+            if result_file_id:
                 result_file_name = "batch_job_results.jsonl"
-                self._download_file(result_file_url, result_file_name)
+                self._download_file(result_file_id, result_file_name)
 
                 # Load data from the saved file
                 results = []
@@ -48,7 +48,7 @@ class OpenAIBatchProcessor:
                 logging.info("Batch job completed successfully.")
                 return results
             else:
-                logging.error("Output file URL not found in the batch job details.")
+                logging.error("Output file ID not found in the batch job details.")
                 return None
         else:
             logging.error(f"Batch job failed with status: {batch_job.get('status')}")
@@ -60,8 +60,10 @@ class OpenAIBatchProcessor:
         response.raise_for_status()
         return response.json()
 
-    def _download_file(self, file_url, output_file_name):
-        response = requests.get(file_url)
+    def _download_file(self, file_id, output_file_name):
+        # Retrieve the file using its ID
+        file_url = f"{self.base_url}/files/{file_id}"
+        response = requests.get(file_url, headers={"Authorization": f"Bearer {self.api_key}"})
         response.raise_for_status()
         with open(output_file_name, "wb") as file:
             file.write(response.content)
