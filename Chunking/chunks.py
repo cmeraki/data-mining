@@ -1,7 +1,20 @@
 import os
 import re
 import argparse
+import logging
 from pydub import AudioSegment
+
+def setup_logging(output_dir):
+    log_file = os.path.join(output_dir, 'chunking.log')
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler(log_file),
+            logging.StreamHandler()
+        ]
+    )
+    return logging.getLogger(__name__)
 
 def parse_vtt(vtt_content):
     captions = []
@@ -22,18 +35,20 @@ def time_to_milliseconds(time_str):
     s, ms = s.split('.')
     return int(h) * 3600000 + int(m) * 60000 + int(s) * 1000 + int(ms)
 
-def process_files(subtitle_dir, audio_dir, output_base_dir):
+def process_files(subtitle_dir, audio_dir, output_base_dir, logger):
     for subtitle_file in os.listdir(subtitle_dir):
         if subtitle_file.endswith('.vtt'):
             base_name = os.path.splitext(subtitle_file)[0]
             audio_file = os.path.join(audio_dir, f"{base_name}.mp3")
             
             if not os.path.exists(audio_file):
-                print(f"Audio file not found for {subtitle_file}. Skipping.")
+                logger.warning(f"Audio file not found for {subtitle_file}. Skipping.")
                 continue
             
             output_dir = os.path.join(output_base_dir, base_name)
             os.makedirs(output_dir, exist_ok=True)
+            
+            logger.info(f"Processing {subtitle_file}")
             
             # Process subtitle file
             with open(os.path.join(subtitle_dir, subtitle_file), 'r', encoding='utf-8') as file:
@@ -64,8 +79,10 @@ def process_files(subtitle_dir, audio_dir, output_base_dir):
                 # Export audio segment
                 audio_filename = f'chunk_{i+1:04d}.mp3'
                 audio_segment.export(os.path.join(output_dir, audio_filename), format="mp3")
+                
+                logger.debug(f"Created chunk {i+1} for {subtitle_file}")
             
-            print(f"Processed {subtitle_file}")
+            logger.info(f"Completed processing {subtitle_file}")
 
 def main():
     parser = argparse.ArgumentParser(description='Process subtitle and audio files.')
@@ -75,7 +92,12 @@ def main():
     
     args = parser.parse_args()
     
-    process_files(args.subtitle_dir, args.audio_dir, args.output_dir)
+    # Setup logging
+    logger = setup_logging(args.output_dir)
+    
+    logger.info("Starting processing")
+    process_files(args.subtitle_dir, args.audio_dir, args.output_dir, logger)
+    logger.info("Processing completed")
 
 if __name__ == "__main__":
     main()
