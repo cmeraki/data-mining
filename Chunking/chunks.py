@@ -37,9 +37,9 @@ def time_to_milliseconds(time_str):
 
 def process_files(subtitle_dir, audio_dir, output_base_dir, logger):
     for subtitle_file in os.listdir(subtitle_dir):
-        if subtitle_file.endswith('.vtt'):
-            base_name = os.path.splitext(subtitle_file)[0]
-            audio_file = os.path.join(audio_dir, f"{base_name}.mp3")
+        if subtitle_file.endswith('.hi.vtt'):
+            base_name = subtitle_file[:-7]  # Remove '.hi.vtt'
+            audio_file = os.path.join(audio_dir, f"{base_name}.wav")
             
             if not os.path.exists(audio_file):
                 logger.warning(f"Audio file not found for {subtitle_file}. Skipping.")
@@ -61,7 +61,7 @@ def process_files(subtitle_dir, audio_dir, output_base_dir, logger):
                 file.write(vtt_content)
             
             # Load audio file
-            audio = AudioSegment.from_file(audio_file, format="mp3")
+            audio = AudioSegment.from_wav(audio_file)
             
             for i, caption in enumerate(captions):
                 # Create text file for each caption
@@ -77,8 +77,8 @@ def process_files(subtitle_dir, audio_dir, output_base_dir, logger):
                 audio_segment = audio[start_ms:end_ms]
                 
                 # Export audio segment
-                audio_filename = f'chunk_{i+1:04d}.mp3'
-                audio_segment.export(os.path.join(output_dir, audio_filename), format="mp3")
+                audio_filename = f'chunk_{i+1:04d}.wav'
+                audio_segment.export(os.path.join(output_dir, audio_filename), format="wav")
                 
                 logger.debug(f"Created chunk {i+1} for {subtitle_file}")
             
