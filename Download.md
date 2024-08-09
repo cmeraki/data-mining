@@ -1,7 +1,3 @@
-Here's a README for your YouTube audio and transcript downloader project:
-
----
-
 # YouTube Audio and Transcript Downloader
 
 This Python project downloads audio and transcript files from YouTube channels. The script uses `yt-dlp` to fetch audio files in WAV format and transcripts (subtitles) from specified YouTube URLs, saving them to designated folders. The script logs the download progress and errors for easy debugging.
