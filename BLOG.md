@@ -1,51 +1,126 @@
-# Youtube video scraping and data chunking
+## Streamlining YouTube Content Extraction and Processing: A Comprehensive Guide
 
-Let's dive into the data flow and code flow of this comprehensive Python script designed to download YouTube videos, extract audio, process subtitles, and manage audio splitting. Here's a step-by-step explanation of how the functions work together:
+In today's digital age, managing multimedia content effectively is crucial for various applications, from data analysis to creating engaging user experiences. This blog post introduces a series of Python scripts designed to handle YouTube audio and transcript downloads, process subtitle files, and interact with OpenAI's API for advanced text processing. We’ll walk you through the key features of these scripts, their setup, usage, and how they fit into a streamlined content processing workflow.
 
-## Step 1: Obtaining YouTube URLs
-The script begins by defining a function get_youtube_urls(channel_url) which takes the URL of a YouTube channel and retrieves all video URLs from that channel. It uses the yt-dlp command-line tool to fetch a playlist in JSON format and extracts video IDs to construct individual video URLs.
+### 1. Downloading YouTube Audio and Transcripts
 
-## Step 2: Downloading Audio
-Next, the download_audio_from_youtube(video_url, output_path) function is responsible for downloading the audio from each YouTube video. Using the pytube library, it filters to get only the audio stream, downloads it, converts it to MP3 format using the pydub library, and saves it. The original file is then deleted to save space.
+The first part of our project focuses on downloading audio and transcripts from YouTube channels. This is particularly useful for content creators, researchers, or anyone needing to archive or analyze YouTube content.
 
-## Step 3: Obtaining VTT Subtitle Files
-To extract subtitles, the extract_transcript(video_url) function uses yt_dlp again with specific options to download automatic subtitles in VTT format. These subtitles are saved in a designated directory.
+#### **Features**
 
-## Step 4: Parsing and Splitting VTT Files
-The script includes multiple functions to handle the parsing and splitting of VTT subtitle files:
+- **Audio Extraction**: The script extracts audio from YouTube videos and saves it in WAV format.
+- **Transcript Download**: It fetches transcripts (subtitles) in a specified language.
+- **Logging**: Detailed logs track the download progress and any errors.
 
-parse_vtt_time(time_str) converts a VTT timestamp into a timedelta object.
-split_vtt_by_timestamps(vtt_content, splits) splits the VTT file into chunks based on provided timestamp ranges.
-write_splits_to_files(split_contents, output_folder) saves these chunks into separate VTT files.
+#### **Setup and Usage**
 
-## Step 5: Processing VTT Files
-The process_vtt_file(file_path, splits, output_folder) function reads the VTT file, splits it using split_vtt_by_timestamps, and writes the split contents to new files.
+1. **Install Prerequisites**
 
-## Step 6: Chunking Audio Files
-To manage audio chunks, the script defines:
+   Make sure you have `yt-dlp` installed. This tool is essential for downloading YouTube content.
 
-chunk_audio_files(timestamps, output_folder) which takes timestamp ranges and splits the audio files accordingly. Each chunk is saved as an individual MP3 file.
-extract_timestamps_from_vtt(filename) extracts timestamp pairs from the VTT file.
-combine_timestamps(timestamps) combines these timestamps into larger chunks.
+   ```bash
+   pip install yt-dlp
+   ```
 
-## Step 7: Converting Milliseconds to Time Format
-The milliseconds_to_time_format(milliseconds) function is a utility to convert milliseconds into a formatted time string, which is useful for handling timestamp data.
+2. **Clone the Repository**
 
-## Step 8: Chunking Audio and Splitting VTT Files
-The script iterates over subtitle files and extracts timestamps, combines them, and splits both audio and VTT files. The timestamps are used to split the audio files into chunks using chunk_audio_files, and VTT files are split using process_vtt_file.
+   ```bash
+   git clone https://github.com/yourusername/your-repository.git
+   cd your-repository
+   ```
 
-## Step 9: Extracting Text from VTT Files
-Finally, to extract specific lines from the VTT files, the script uses:
+3. **Run the Script**
 
-extract_specific_lines(vtt_filename) which identifies lines matching a particular pattern.
-extract_text_from_vtt_line(line) which removes unwanted tags from the lines to extract clean text.
+   ```bash
+   python download.py <channel_url> <audio_output_folder> <subtitle_output_folder>
+   ```
 
-## Summary
-The overall flow of the script involves:
+   Replace `<channel_url>`, `<audio_output_folder>`, and `<subtitle_output_folder>` with appropriate values for your use case.
 
-Fetching video URLs from a YouTube channel.
-Downloading and converting audio from these videos.
-Downloading subtitle files for the videos.
-Parsing and splitting both the audio and subtitle files based on timestamps.
-Extracting and cleaning text from subtitle files.
-This modular approach ensures that each task is handled by a dedicated function, making the script efficient and easy to manage. The final outcome is a set of chunked audio files and corresponding subtitle segments, with clean text extracted from the subtitles for further use.
+### 2. Processing VTT Files and OpenAI Batch Processing
+
+Once you have your audio and transcripts, the next step is to process subtitle files and interact with OpenAI's API. This step involves converting VTT subtitles to JSON and sending batch jobs to OpenAI for advanced text processing.
+
+#### **Features**
+
+- **VTT Processing**: Converts VTT subtitle files to JSON by removing timestamps and directives.
+- **OpenAI Integration**: Uploads processed JSON files to OpenAI and initiates batch jobs for further processing.
+
+#### **Setup and Usage**
+
+1. **Install Prerequisites**
+
+   Install the `openai` library to interact with OpenAI's API.
+
+   ```bash
+   pip install openai
+   ```
+
+2. **Clone the Repository**
+
+   ```bash
+   git clone https://github.com/yourusername/your-repository.git
+   cd your-repository
+   ```
+
+3. **Run the Scripts**
+
+   - **Process VTT Files**
+
+     ```bash
+     python requests.py <directory_with_vtt_files> <output_json_file>
+     ```
+
+   - **Send Batch Job to OpenAI**
+
+     ```bash
+     python batch_romanize.py <input_json_file>
+     ```
+
+   Ensure your OpenAI API key is set in your environment variables:
+
+   ```bash
+   export OPENAI_API_KEY="your_openai_api_key"
+   ```
+
+### 3. Subtitle and Audio Chunk Processing
+
+The final step involves processing subtitle and audio files to create manageable chunks. This is ideal for detailed analysis, segmentation, or enhanced user experiences.
+
+#### **Features**
+
+- **Subtitle Parsing**: Extracts text and timing information from `.hi_final.vtt` subtitle files.
+- **Audio Chunking**: Splits audio files based on subtitle timings and rules.
+- **Metadata Generation**: Creates a JSONL file with metadata for each chunk.
+- **Logging**: Provides detailed logs for process tracking.
+
+#### **Setup and Usage**
+
+1. **Install Prerequisites**
+
+   Install `pydub` and ensure `ffmpeg` or `libav` is available on your system.
+
+   ```bash
+   pip install pydub
+   ```
+
+2. **Clone the Repository**
+
+   ```bash
+   git clone https://github.com/yourusername/your-repository.git
+   cd your-repository
+   ```
+
+3. **Run the Script**
+
+   ```bash
+   python script_name.py <subtitle_dir> <audio_dir> <output_dir> [--channel CHANNEL] [--language LANGUAGE] [--subtitles SUBTITLES] [--category CATEGORY]
+   ```
+
+   Customize the command with the appropriate directories and optional parameters.
+
+### Conclusion
+
+By integrating these scripts, you can automate and streamline the process of extracting, processing, and analyzing YouTube content. Whether you're working on a research project, managing content, or developing new features, these tools offer a powerful way to handle multimedia data efficiently.
+
+For any questions or suggestions, feel free to contact [Subhash]
