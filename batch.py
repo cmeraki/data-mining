@@ -1,0 +1,37 @@
+import argparse
+import logging
+import time
+import json
+import os
+from openai import OpenAI
+import logging
+
+class OpenAIBatchProcessor:
+    def __init__(self, api_key):
+        self.client = OpenAI(api_key=api_key)
+
+    def send_batch(self, input_file_path, endpoint, completion_window):
+        # Upload the input file
+        with open(input_file_path, "rb") as file:
+            uploaded_file = self.client.files.create(
+                file=file,
+                purpose="batch"
+            )
+
+        # Create the batch job
+        batch_job = self.client.batches.create(
+            input_file_id=uploaded_file.id,
+            endpoint=endpoint,
+            completion_window=completion_window
+        )
+
+        # Save the batch details to a JSON file
+        batch_details = {
+            'batch_job_id': batch_job.id,
+            'status': batch_job.status
+        }
+
+        with open('batch_details.json', 'w') as file:
+            json.dump(batch_details, file)
+
+        logging.info(f"Batch job sent with ID: {batch_job.id}")
