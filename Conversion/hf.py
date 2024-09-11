@@ -8,6 +8,7 @@ from datalib import Dataset
 from torio.io import CodecConfig
 from tqdm import tqdm
 from tokenlib import AUDIO
+import soundfile as sf
 
 def stream_samples_from_jsonl(jsonl_file):
     with open(jsonl_file, 'r') as f:
@@ -19,16 +20,12 @@ def make_dataset(jsonl_file, hf_repo_id):
     dataset = Dataset(repo_id=hf_repo_id)
 
     for item in tqdm(stream_samples_from_jsonl(jsonl_file)):
-        sample = dataset.create_sample(id=item['chunk_id'].replace('.wav',''))
+        sample = dataset.create_sample(id=item['chunk_id'])
 
         sample.raw_text = item['text']
-        sample.duration = (item['end_time'] - item['begin_time'])/1000
-        sample.metadata = {'source':item['source'],
-                          'language':item['language'],
-                          'subtitles':item['subtitles'],
-                          'category':item['category']}
+
         audio_path = item['audio']
-        audio_path = os.path.join("data_drive/home/user1/dataset/TEDEd/chunks",audio_path)
+        audio_path = os.path.join("/mnt/disks/audio-data-2/Data/SandeepMaheshwari/chunks",audio_path)
         audio_array, sr = torchaudio.load(audio_path)
 
         audio_array = convert_audio(audio_array,
@@ -46,9 +43,8 @@ def make_dataset(jsonl_file, hf_repo_id):
                           compression=CodecConfig(bit_rate=64000))
 
         dataset.add_sample(sample)
-    return dataset
 
-    #dataset.upload(hf_repo_id=hf_repo_id)
+    dataset.upload(hf_repo_id=hf_repo_id)
 
 def tokenize(hf_repo_id):
     dataset = Dataset(repo_id=hf_repo_id)
@@ -67,12 +63,11 @@ def test_dataset(hf_repo_id):
         pass
 
 # Replace 'path_to_your_jsonl_file' with the actual path to your JSONL file
-jsonl_file = 'data_drive/home/user1/dataset/TEDEd/chunks/chunks.jsonl'
+jsonl_file = '/mnt/disks/audio-data-2/Data/SandeepMaheshwari/chunks/chunks.jsonl'
 
 # Replace 'new_repo_name' with the desired name for your Hugging Face repository
-hf_repo_id = 'youtube_en_teded'
+hf_repo_id = 'youtube_sandeepmaheshwari_hi_raw'
 
-ds = make_dataset(jsonl_file, hf_repo_id)
-#tokenize(hf_repo_id)
+make_dataset(jsonl_file, hf_repo_id)
+tokenize(hf_repo_id)
 test_dataset(hf_repo_id)
-ds.upload(hf_repo_id=hf_repo_id)

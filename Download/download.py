@@ -1,6 +1,5 @@
 import argparse
 from downloadutils import *
-from utils import *
 
 def main(channel_url, audio_output_folder, subtitle_output_folder):
     video_urls = get_youtube_urls(channel_url)

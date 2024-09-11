@@ -1,10 +1,32 @@
 import os
 import yt_dlp
 import logging
+import subprocess
+import json
 
 # Setup logging
 logging.basicConfig(filename='download.log', filemode='w', level=logging.DEBUG, format='%(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('Scraping log')
+
+def get_youtube_urls(channel_url):
+    '''
+    Extract the video urls of a youtube channel
+    params:
+    channel_url: str: The URL of the YouTube channel
+    '''
+    command = ['yt-dlp', '-j', '--flat-playlist', channel_url]
+    
+    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    if result.returncode != 0:
+        return []
+    
+    video_urls = []
+    for line in result.stdout.strip().split('\n'):
+        video_data = json.loads(line)
+        video_url = f"https://www.youtube.com/watch?v={video_data['id']}"
+        video_urls.append(video_url)
+    
+    return video_urls
 
 def download_youtube_audios_and_transcripts(output_audio_dir, output_transcript_dir, youtube_links):
     """
@@ -20,36 +42,29 @@ def download_youtube_audios_and_transcripts(output_audio_dir, output_transcript_
     os.makedirs(output_transcript_dir, exist_ok=True)
 
     for link in youtube_links:
-        # Define options for downloading audio
-        ydl_opts_audio = {
+        # Define combined options for downloading audio and subtitles
+        ydl_opts = {
             'format': 'bestaudio/best',
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'wav',  
                 'preferredquality': '192', 
             }],
-            'outtmpl': os.path.join(output_audio_dir, '%(id)s.%(ext)s'),  # Use video ID for filename
-        }
-
-        # Define options for downloading subtitles
-        ydl_opts_transcript = {
+            'outtmpl': {
+                'default': os.path.join(output_audio_dir, '%(id)s.%(ext)s'),
+                'subtitle': os.path.join(output_transcript_dir, '%(id)s.%(ext)s'),
+            },
             'writesubtitles': True,
-            'subtitleslangs': ['hi',],  # Change 'en' to your preferred language code
+            'subtitleslangs': ['hi'],  # Change 'en' to your preferred language code
             'writeautomaticsub': True,
-            'skip_download': True,
-            'outtmpl': os.path.join(output_transcript_dir, '%(id)s.%(ext)s'),  # Use video ID for filename
         }
 
         try:
-            # Download audio
-            with yt_dlp.YoutubeDL(ydl_opts_audio) as ydl:
+            # Download audio and transcript
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 ydl.download([link])
-            logger.info(f"Download completed for audio with ID {link.split('=')[-1]}.wav.")
-
-            # Download transcript
-            with yt_dlp.YoutubeDL(ydl_opts_transcript) as ydl:
-                ydl.download([link])
-            logger.info(f"Download completed for transcript with ID {link.split('=')[-1]}.")
-
+            
+            video_id = link.split('=')[-1]
+            logger.info(f"Download completed for audio and transcript with ID {video_id}")
         except Exception as e:
             logger.error(f"Failed to download for {link}. Error: {e}")
